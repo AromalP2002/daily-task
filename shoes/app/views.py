@@ -10,8 +10,7 @@ from django.contrib import messages
 def shop_login(req):
     if 'shop' in req.session:
         return redirect(shop_home)
-    if 'user' in req.session:
-        return redirect(user_home)
+    
     if req.method=='POST':
         uname=req.POST['uname']
         password=req.POST['pswd']
@@ -21,10 +20,7 @@ def shop_login(req):
                 login(req,data)
                 req.session['shop']=uname
                 return redirect(shop_home)
-            else:
-                login(req,data)
-                req.session['user']=uname
-                return redirect(user_home)
+           
         else:
             messages.warning(req,"invalid username or password")
             return redirect(shop_login)
@@ -38,8 +34,8 @@ def shop_logout(req):
 
 def shop_home(req):
     if 'shop' in req.session:
-        data=Product.objects.all()[::-1][:10]
-        return render(req,'shop/home.html',{'products':data})
+        data=product.objects.all()[::-1][:10]
+        return render(req,'shop/home.html',{'product':data})
     else:
         return redirect(shop_login)
 
@@ -52,7 +48,7 @@ def add_pro(req):
             offer_price=req.POST['offer_price']
             des=req.POST['des']
             img=req.FILES['img']
-            data=Product.objects.create(pro_id=id,name=name,price=price,offer_price=offer_price,dis=des,img=img)
+            data=product.objects.create(pro_id=id,name=name,price=price,offer_price=offer_price,dis=des,img=img)
             data.save()
             return redirect(shop_home)
         else:
@@ -70,13 +66,13 @@ def edit_product(req,pid):
             des=req.POST['des']
             img=req.FILES['img']
             if img:
-                Product.objects.filter(pk=pid).update(pro_id=id,name=name,price=price,offer_price=offer_price,dis=des,img=img)
+                product.objects.filter(pk=pid).update(pro_id=id,name=name,price=price,offer_price=offer_price,dis=des,img=img)
             else:
-                Product.objects.filter(pk=pid).update(pro_id=id,name=name,price=price,offer_price=offer_price,dis=des)
+                product.objects.filter(pk=pid).update(pro_id=id,name=name,price=price,offer_price=offer_price,dis=des)
 
             return redirect(shop_home)
         else:
-            data=Product.objects.get(pk=pid)
+            data=product.objects.get(pk=pid)
             return render(req,'shop/edit.html',{'product':data})
     else:
         return redirect(shop_login)
@@ -85,7 +81,7 @@ def edit_product(req,pid):
 
 
 def delete_product(req,pid):
-    data=Product.objects.get(pk=pid)
+    data=product.objects.get(pk=pid)
     url=data.img.url
     og_path=url.split('/')[-1]
     os.remove('media/'+og_path)
