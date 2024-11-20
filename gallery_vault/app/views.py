@@ -38,7 +38,7 @@ def gal_home(req):
 
 
 
-#***************************user************************
+# **************************user************************
 
 def register(req):
     if req.method=='POST':
@@ -71,7 +71,7 @@ def file_upd(req):
             nm_img=file.name
             ex_img=nm_img.split('.')[-1]
             print(ex_img)
-            if ex_img in ['jpg','jpeg']:
+            if ex_img in ['jpg','jpeg','webp','avif','tiff']:
                 user=User.objects.get(username=req.session['user'])
                 data=Img.objects.create(img=file,user=user)
                 data.save()
@@ -87,3 +87,4 @@ def file_upd(req):
             return render(req,'user/file.html')
     else:
         return redirect(gal_login)
+   
